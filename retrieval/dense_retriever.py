@@ -79,14 +79,14 @@ class DenseRetriever:
 
         logger.info("Loaded FAISS index with %d chunks", len(self._chunks))
 
-    def ensure_loaded(self, *, build_if_missing: bool = False) -> None:
+    def ensure_loaded(self, *, build_if_missing: bool = True) -> None:
         try:
             self.load()
             return
         except FileNotFoundError:
             if not build_if_missing:
                 raise
-            logger.info("Index artifacts missing. Building index now...")
+            logger.info("Index artifacts missing. Auto-building retrieval.index_builder artifacts now...")
             build_index(self.settings)
             self.load()
 
@@ -94,7 +94,7 @@ class DenseRetriever:
         if not query or not query.strip():
             return []
         if self._index is None:
-            self.ensure_loaded(build_if_missing=False)
+            self.ensure_loaded(build_if_missing=True)
 
         k = max(1, int(top_k or self.settings.top_k))
         k = min(k, max(1, len(self._chunks)))
