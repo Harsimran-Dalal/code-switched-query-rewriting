@@ -3,7 +3,7 @@ services:
     name: code-switched-query-rewriting
     env: python
     plan: free
-    buildCommand: pip install --upgrade pip setuptools wheel && pip install -r requirements.txt
+    buildCommand: pip install --upgrade pip setuptools wheel && pip install --only-binary=:all: -r requirements.txt
     startCommand: streamlit run app/streamlit_app.py --server.port $PORT --server.address 0.0.0.0
     envVars:
       - key: PYTHON_VERSION
