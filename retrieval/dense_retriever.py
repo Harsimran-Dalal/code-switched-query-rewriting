@@ -58,6 +58,7 @@ class DenseRetriever:
         return self._model
 
     def load(self) -> None:
+        logger.info("Loading retriever index artifacts from %s", self.settings.index_dir)
         try:
             import faiss
         except Exception as e:  # pragma: no cover
@@ -67,6 +68,8 @@ class DenseRetriever:
         meta_path = self.settings.index_dir / "metadata.json"
 
         if not index_path.exists() or not meta_path.exists():
+            logger.warning("Index missing at %s", self.settings.index_dir)
+            print(f"[retriever] index missing at {self.settings.index_dir}")
             raise FileNotFoundError(
                 f"Missing index artifacts in {self.settings.index_dir}. Run: python -m retrieval.index_builder"
             )
@@ -86,8 +89,11 @@ class DenseRetriever:
         except FileNotFoundError:
             if not build_if_missing:
                 raise
-            logger.info("Index artifacts missing. Auto-building retrieval.index_builder artifacts now...")
+            logger.info("Building index artifacts via retrieval.index_builder...")
+            print("[retriever] building index via retrieval.index_builder")
             build_index(self.settings)
+            logger.info("Index build completed. Loading retriever...")
+            print("[retriever] index build completed")
             self.load()
 
     def search(self, query: str, top_k: Optional[int] = None) -> List[RetrievedChunk]:

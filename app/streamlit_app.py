@@ -558,6 +558,10 @@ def _render_rewrite_pipeline(query_text: str, rewrite_preview) -> None:
     st.code(rewrite_preview.rewritten_query)
 
 
+def _retrieval_artifacts_exist(index_dir: Path) -> bool:
+    return (index_dir / "faiss.index").exists() and (index_dir / "metadata.json").exists()
+
+
 @st.cache_resource
 def _get_cached_runtime_components():
     settings = get_settings()
@@ -786,6 +790,10 @@ def main() -> None:
     st.subheader("3) Run Retrieval + Answer Generation")
     if st.button("Run Baseline vs Rewritten", type="primary", disabled=not bool(query_text)):
         s.top_k = int(top_k)
+        if not _retrieval_artifacts_exist(pipeline.retriever.settings.index_dir):
+            st.info("Index not found. Building retrieval index for first launch...")
+            with st.spinner("Preparing retrieval index..."):
+                pipeline.retriever.ensure_loaded(build_if_missing=True)
         with st.spinner("Running baseline and rewritten modes..."):
             comparison = pipeline.compare_modes(query_text)
         st.session_state["comparison"] = comparison
