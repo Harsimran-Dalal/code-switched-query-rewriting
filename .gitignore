@@ -4,9 +4,14 @@ __pycache__/
 *.pyc
 *.pyo
 *.pyd
+.Python
 .env
 .streamlit/secrets.toml
 .ipynb_checkpoints/
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
 *.log
 *.tmp
 models/

@@ -2,6 +2,8 @@ from __future__ import annotations
 
 import csv
 import json
+import os
+import sys
 from datetime import datetime
 from dataclasses import asdict
 from pathlib import Path
@@ -9,7 +11,12 @@ from typing import Any, Optional
 
 import streamlit as st
 
+ROOT_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+if ROOT_DIR not in sys.path:
+    sys.path.insert(0, ROOT_DIR)
+
 from rag.pipeline import RAGPipeline
+
 from rewriting.rule_based import RuleBasedRewriter
 try:
     from speech.asr_pipeline import ASRTranscriber
@@ -551,6 +558,15 @@ def _render_rewrite_pipeline(query_text: str, rewrite_preview) -> None:
     st.code(rewrite_preview.rewritten_query)
 
 
+@st.cache_resource
+def _get_cached_runtime_components():
+    settings = get_settings()
+    pipeline = RAGPipeline(settings)
+    rewriter = RuleBasedRewriter(settings)
+    transcriber = ASRTranscriber(settings) if ASRTranscriber is not None else None
+    return pipeline, rewriter, transcriber
+
+
 def _init_session_state() -> None:
     if "asr_text" not in st.session_state:
         st.session_state["asr_text"] = ""
@@ -693,9 +709,7 @@ def main() -> None:
             st.caption("Audio/ASR mode is unavailable until optional speech dependencies are installed.")
     _render_session_history_sidebar()
 
-    pipeline = RAGPipeline(s)
-    rewriter = RuleBasedRewriter(s)
-    transcriber = ASRTranscriber(s) if ASRTranscriber is not None else None
+    pipeline, rewriter, transcriber = _get_cached_runtime_components()
 
     if "asr_text" not in st.session_state:
         st.session_state["asr_text"] = ""
