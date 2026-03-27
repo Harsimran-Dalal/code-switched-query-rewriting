@@ -2,6 +2,8 @@ from __future__ import annotations
 
 import argparse
 import json
+import logging
+import re
 from dataclasses import asdict, dataclass
 from pathlib import Path
 from typing import Any, Optional
@@ -11,6 +13,118 @@ from rag.generator import RAGGenerator
 from rewriting.rule_based import RuleBasedRewriter
 from utils import Settings, get_settings
 from utils.logger import setup_logging
+
+logger = logging.getLogger(__name__)
+
+SUPPORTED_TOPIC_HINT = (
+    "This query appears to be outside the supported academic/admission domain. "
+    "Please ask about admission, scholarship, counselling, fees, merit, cutoff, eligibility, "
+    "or required documents."
+)
+
+_DOMAIN_KEYWORDS = {
+    "admission",
+    "admissions",
+    "college",
+    "scholarship",
+    "scholarships",
+    "fees",
+    "fee",
+    "counselling",
+    "counseling",
+    "cutoff",
+    "merit",
+    "document",
+    "documents",
+    "eligibility",
+    "eligible",
+    "registration",
+    "register",
+    "seats",
+    "seat",
+    "certificate",
+    "certificates",
+    "hostel",
+    "branch",
+    "course",
+    "courses",
+    "undergrad",
+    "ug",
+    "pg",
+    "process",
+    "admit",
+    "enrollment",
+    "income",
+    "minority",
+    "reservation",
+    "quota",
+    "counselling",
+    "counselling",
+    "form",
+    "apply",
+    "application",
+    "kaunseling",
+    "kaunsling",
+    "admision",
+    "admishan",
+    "scholarship",
+    "fee",
+    "fees",
+    "cut off",
+    "cutt off",
+    "cutof",
+    "meritlist",
+    "hostel",
+    "branch",
+    "course",
+    "dakhla",
+    "dakhlaa",
+    "dakhila",
+    "dakhla",
+    "daakhla",
+    "daakhila",
+    "college",
+    "collage",
+    "seat",
+    "seatan",
+    "documents",
+    "doc",
+    "certificate",
+    "income certificate",
+    "migration certificate",
+    "character certificate",
+    "adhaar",
+    "aadhar",
+    "bonafide",
+    "counselling",
+    "counseling",
+    "merit",
+    "registration",
+    "scholarship",
+    "eligibility",
+    "form bharna",
+    "form bharna",
+    "fees kitni",
+    "seat kitni",
+    "required documents",
+    "admission process",
+}
+
+_TOKEN_RE = re.compile(r"[a-zA-Z][a-zA-Z0-9_#+.-]*")
+
+
+def is_low_confidence(score: float, threshold: float = 0.30) -> bool:
+    return float(score) < float(threshold)
+
+
+def is_domain_relevant(query: str, min_hits: int = 1) -> bool:
+    q = (query or "").strip().lower()
+    if not q:
+        return False
+
+    tokens = set(_TOKEN_RE.findall(q))
+    hits = sum(1 for kw in _DOMAIN_KEYWORDS if (kw in q) or (kw in tokens))
+    return hits >= int(min_hits)
 
 
 @dataclass
@@ -23,6 +137,13 @@ class PipelineResult:
     summary: str
     generation_mode: str
     citations: list[str]
+    status: str = "ok"
+    reason: Optional[str] = None
+    top_score: float = 0.0
+    threshold: float = 0.30
+    low_confidence: bool = False
+    domain_relevant: bool = True
+    message: Optional[str] = None
 
 
 @dataclass
@@ -73,8 +194,54 @@ class RAGPipeline:
             }
 
         retrieved = self.retriever.search(query_used, top_k=self.settings.top_k)
-        gen = self.generator.generate(query_used, retrieved)
         retrieved_payload = self._serialize_retrieved(retrieved)
+        top_score = float(retrieved_payload[0].get("score", 0.0) if retrieved_payload else 0.0)
+        threshold = float(self.settings.low_confidence_threshold)
+        domain_relevant = is_domain_relevant(query_original, min_hits=self.settings.domain_min_hits)
+        low_confidence = is_low_confidence(top_score, threshold=threshold)
+
+        status = "ok"
+        reason: Optional[str] = None
+        message: Optional[str] = None
+        if not domain_relevant:
+            status = "rejected"
+            reason = "out_of_domain"
+            message = SUPPORTED_TOPIC_HINT
+        elif low_confidence:
+            status = "rejected"
+            reason = "low_confidence"
+            message = (
+                "The retriever confidence is too low for a trustworthy answer. "
+                "Please rephrase your question or ask about admission, scholarship, counselling, fees, merit, cutoff, eligibility, or required documents."
+            )
+
+        if status == "rejected":
+            logger.info(
+                "Rejecting query. reason=%s top_score=%.3f threshold=%.3f domain_relevant=%s",
+                reason,
+                top_score,
+                threshold,
+                domain_relevant,
+            )
+            return PipelineResult(
+                query_original=query_original,
+                query_used=query_used,
+                rewrite_details=rewrite_details,
+                retrieved=retrieved_payload,
+                answer=message or "",
+                summary=message or "",
+                generation_mode="rejected",
+                citations=[],
+                status=status,
+                reason=reason,
+                top_score=top_score,
+                threshold=threshold,
+                low_confidence=low_confidence,
+                domain_relevant=domain_relevant,
+                message=message,
+            )
+
+        gen = self.generator.generate(query_used, retrieved)
 
         return PipelineResult(
             query_original=query_original,
@@ -85,6 +252,13 @@ class RAGPipeline:
             summary=gen.summary,
             generation_mode=gen.mode,
             citations=gen.citations,
+            status="ok",
+            reason=None,
+            top_score=top_score,
+            threshold=threshold,
+            low_confidence=low_confidence,
+            domain_relevant=domain_relevant,
+            message=None,
         )
 
     def compare_modes(self, query: str) -> PipelineComparison:

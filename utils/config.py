@@ -29,6 +29,8 @@ class Settings(BaseSettings):
     top_k: int = Field(default=5, alias="TOP_K")
     chunk_size: int = Field(default=350, alias="CHUNK_SIZE")
     chunk_overlap: int = Field(default=60, alias="CHUNK_OVERLAP")
+    low_confidence_threshold: float = Field(default=0.30, alias="LOW_CONFIDENCE_THRESHOLD")
+    domain_min_hits: int = Field(default=1, alias="DOMAIN_MIN_HITS")
 
     # ASR
     asr_backend: Literal["faster-whisper", "whisper"] = Field(default="faster-whisper", alias="ASR_BACKEND")

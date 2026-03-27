@@ -461,6 +461,32 @@ def _render_result_block(label: str, result) -> None:
         st.caption("Citations: " + ", ".join(result.citations))
 
 
+def _reason_label(reason: Optional[str]) -> str:
+    if reason == "out_of_domain":
+        return "Out of Domain"
+    if reason == "low_confidence":
+        return "Low Confidence"
+    return "Unknown"
+
+
+def _render_rejection_block(label: str, result) -> None:
+    st.markdown(f"### {label}")
+    st.warning("⚠ Query Not Supported / Low Confidence")
+    st.markdown(f"**Reason:** {_reason_label(getattr(result, 'reason', None))}")
+    st.markdown(f"**Top-1 Score:** {float(getattr(result, 'top_score', 0.0) or 0.0):.3f}")
+    st.markdown(f"**Threshold:** {float(getattr(result, 'threshold', 0.30) or 0.30):.3f}")
+    if getattr(result, "message", None):
+        st.info(str(result.message))
+    st.markdown(
+        "Try asking about:\n"
+        "- Admission process\n"
+        "- Scholarship eligibility\n"
+        "- Fees and seats\n"
+        "- Merit / cutoff\n"
+        "- Counselling documents"
+    )
+
+
 def _top1(result) -> tuple[str, float]:
     retrieved = result.retrieved or []
     if not retrieved:
@@ -803,22 +829,39 @@ def main() -> None:
     if comparison:
         baseline = comparison.baseline
         rewritten = comparison.rewritten
+        baseline_rejected = getattr(baseline, "status", "ok") == "rejected"
+        rewritten_rejected = getattr(rewritten, "status", "ok") == "rejected"
 
         st.subheader("4) Baseline vs Rewritten")
         col_left, col_right = st.columns(2)
         with col_left:
-            _render_result_block("Baseline Retrieval", baseline)
+            if baseline_rejected:
+                _render_rejection_block("Baseline Retrieval", baseline)
+            else:
+                _render_result_block("Baseline Retrieval", baseline)
         with col_right:
-            _render_result_block("Rewritten Retrieval", rewritten)
+            if rewritten_rejected:
+                _render_rejection_block("Rewritten Retrieval", rewritten)
+            else:
+                _render_result_block("Rewritten Retrieval", rewritten)
 
-        _render_comparison_insights(baseline, rewritten)
+        if not baseline_rejected and not rewritten_rejected:
+            _render_comparison_insights(baseline, rewritten)
+        else:
+            st.info("Comparison insights are shown for accepted queries with sufficient retrieval confidence.")
 
         st.subheader("Top Retrieved Documents")
         col3, col4 = st.columns(2)
         with col3:
-            _render_retrieved_docs("Baseline Top Docs", baseline.retrieved, max_docs=max_docs_to_show)
+            if baseline_rejected:
+                st.info("Baseline retrieval documents are hidden because the query was rejected.")
+            else:
+                _render_retrieved_docs("Baseline Top Docs", baseline.retrieved, max_docs=max_docs_to_show)
         with col4:
-            _render_retrieved_docs("Rewritten Top Docs", rewritten.retrieved, max_docs=max_docs_to_show)
+            if rewritten_rejected:
+                st.info("Rewritten retrieval documents are hidden because the query was rejected.")
+            else:
+                _render_retrieved_docs("Rewritten Top Docs", rewritten.retrieved, max_docs=max_docs_to_show)
 
         with st.expander("Raw Comparison JSON", expanded=False):
             st.code(json.dumps(asdict(comparison), ensure_ascii=False, indent=2))
