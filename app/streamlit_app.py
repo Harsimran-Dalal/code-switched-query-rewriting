@@ -11,7 +11,10 @@ import streamlit as st
 
 from rag.pipeline import RAGPipeline
 from rewriting.rule_based import RuleBasedRewriter
-from speech.asr_pipeline import ASRTranscriber
+try:
+    from speech.asr_pipeline import ASRTranscriber
+except Exception:
+    ASRTranscriber = None
 from utils import get_settings
 from utils.logger import setup_logging
 
@@ -682,12 +685,17 @@ def main() -> None:
         top_k = st.number_input("Top-K", min_value=1, max_value=20, value=int(s.top_k))
         show_segments = st.toggle("Show ASR timestamps", value=False)
         max_docs_to_show = st.slider("Retrieved docs to display", min_value=1, max_value=10, value=5)
-        mode = st.radio("Input mode", ["Text (ASR transcript)", "Audio file (ASR)"], index=0)
+        mode_options = ["Text (ASR transcript)"]
+        if ASRTranscriber is not None:
+            mode_options.append("Audio file (ASR)")
+        mode = st.radio("Input mode", mode_options, index=0)
+        if ASRTranscriber is None:
+            st.caption("Audio/ASR mode is unavailable until optional speech dependencies are installed.")
     _render_session_history_sidebar()
 
     pipeline = RAGPipeline(s)
     rewriter = RuleBasedRewriter(s)
-    transcriber = ASRTranscriber(s)
+    transcriber = ASRTranscriber(s) if ASRTranscriber is not None else None
 
     if "asr_text" not in st.session_state:
         st.session_state["asr_text"] = ""
@@ -714,18 +722,24 @@ def main() -> None:
             st.caption(f"Saved audio: {audio_path.as_posix()}")
 
             if st.button("Transcribe Speech", type="secondary"):
-                with st.spinner("Running ASR..."):
-                    asr = transcriber.transcribe(audio_path, return_timestamps=show_segments)
-                st.session_state["asr_text"] = asr.text.strip()
-                st.session_state["asr_meta"] = {
-                    "language": asr.language,
-                    "language_probability": asr.language_probability,
-                    "duration_seconds": asr.duration_seconds,
-                    "segments": [
-                        {"start": s.start, "end": s.end, "text": s.text}
-                        for s in (asr.segments or [])
-                    ],
-                }
+                if transcriber is None:
+                    st.error("ASR backend is not available in this deployment.")
+                else:
+                    try:
+                        with st.spinner("Running ASR..."):
+                            asr = transcriber.transcribe(audio_path, return_timestamps=show_segments)
+                        st.session_state["asr_text"] = asr.text.strip()
+                        st.session_state["asr_meta"] = {
+                            "language": asr.language,
+                            "language_probability": asr.language_probability,
+                            "duration_seconds": asr.duration_seconds,
+                            "segments": [
+                                {"start": s.start, "end": s.end, "text": s.text}
+                                for s in (asr.segments or [])
+                            ],
+                        }
+                    except Exception as exc:
+                        st.error(f"ASR failed: {exc}")
 
         st.session_state["asr_text"] = st.text_area(
             "Raw ASR transcript (editable)",
