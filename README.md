@@ -256,7 +256,7 @@ Evaluation can be exported to CSV for report-ready analysis and integrated back 
 ```bash
 git clone <your-repo-url>
 cd code-switched-query-rewriting
-ython -m venv venv
+python -m venv venv
 venv\Scripts\activate
 pip install -r requirements.txt
 ```
