@@ -8,11 +8,60 @@ ASR transcript -> explainable rewriting -> dense retrieval -> answer generation
 ![Sentence Transformers](https://img.shields.io/badge/Sentence%20Transformers-Embeddings-4F46E5)
 ![License](https://img.shields.io/badge/License-MIT-22C55E)
 
+
+> [!IMPORTANT]
+> This is a **domain-specific retrieval system**, not a general chatbot.  
+> It is designed for **code-switched academic/admission-related spoken queries** and should be tested primarily on **in-domain queries**.
+
 ## Overview
 
 Code-switched spoken queries are natural for multilingual users, but difficult for conventional retrieval pipelines. Real user input often contains transliterated erms, mixed syntax, and ASR-style noise, which weakens semantic matching and retrieval confidence.
 
 This project builds an academic + engineering system that improves retrieval robustness by introducing an explainable rewriting layer before dense retrieval. It rocesses noisy spoken-style input, generates retrieval-focused rewrites, compares baseline vs rewritten retrieval, and produces context-grounded answers in an nteractive Streamlit interface.
+
+---
+
+## Supported Domain and Dataset Scope
+
+This system is **domain-specific** and is designed for **academic / admission-related retrieval** over a curated institutional-style document corpus.
+
+### Supported Query Categories
+The system is intended to answer noisy, code-switched, spoken-style queries related to:
+
+- Admission process
+- Scholarship eligibility
+- Fees and seats
+- Merit / cutoff
+- Counselling process
+- Required documents
+- Registration steps
+- Eligibility criteria
+- Certificates and verification
+- College-related procedural information
+
+### Example Supported Queries
+- Admission process ka pura step kya hota hai?
+- Agar income certificate nahi hai to scholarship milegi ya nahi?
+- Counselling time te kehde documents leke aane hunde ne?
+- Private college me fees zyada hoti hai ya govt me?
+- Merit list cutoff kinne tak ja sakdi aa?
+
+### Out-of-Scope Queries
+This is **not a general-purpose chatbot** and is **not intended** for unrelated domains such as:
+
+- personal advice
+- relationships
+- entertainment
+- shopping
+- health
+- coding help
+- current affairs
+- open-domain Q&A
+
+### Important Note
+If a query falls outside the supported academic/admission domain, the system may return low-confidence or irrelevant retrieval results unless an out-of-domain guard is enabled.
+
+This project should be evaluated primarily on **domain-relevant code-switched spoken queries**.
 
 ---
 
