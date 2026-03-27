@@ -1,0 +1,11 @@
+Cutoff and merit list basics
+
+"Cutoff" usually refers to the minimum score/percentage/rank required to be considered for admission.
+
+Merit lists may be formed using:
+
+- Entrance exam score (normalized if multiple sessions)
+- Board marks (percentage) or a weighted combination
+- Category-wise cutoffs based on seat matrix and reservation rules
+
+If you search for "cutoff", also include "merit list", "seat matrix", and the program name for better retrieval.

@@ -1,0 +1,10 @@
+FAISS dense retrieval notes
+
+FAISS is a library for efficient similarity search over dense vectors.
+
+Common workflow:
+- Encode documents into embeddings (e.g., SentenceTransformers).
+- Normalize embeddings and use inner product (IndexFlatIP) to approximate cosine similarity.
+- Persist the index to disk, along with metadata mapping index positions to document chunks.
+
+For small academic prototypes, IndexFlatIP is simple and reproducible on CPU.

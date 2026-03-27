@@ -1,0 +1,12 @@
+RAG (Retrieval-Augmented Generation) basics
+
+RAG systems answer questions by retrieving relevant documents/passages and then generating an answer grounded in those passages.
+
+Typical steps:
+1) Embed the query and documents into vectors (dense retrieval) or use lexical matching (BM25).
+2) Retrieve top-k relevant chunks.
+3) Provide the retrieved context to a generator to produce the final answer.
+
+Benefits:
+- Improves factual grounding (less hallucination)
+- Enables domain-specific answers without training a new model

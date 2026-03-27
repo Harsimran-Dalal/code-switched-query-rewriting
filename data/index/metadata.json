@@ -1,0 +1,53 @@
+{
+  "chunks": [
+    {
+      "chunk_id": "admission_process::chunk000",
+      "doc_id": "admission_process",
+      "doc_title": "admission process",
+      "source_path": "D:/Retrieval-Aware Query Rewriting for Code-Switched Spoken Questions/code-switched-query-rewriting/data/documents/admission_process.txt",
+      "text": "Admission process overview (undergraduate) This document explains a typical undergraduate admission workflow: 1) Check eligibility criteria listed in the program brochure. 2) Fill the online application form on the official portal. 3) Upload required documents (ID proof, marksheets, category certificate if applicable). 4) Pay the application fee and submit before the deadline. 5) Track the application status and merit list / counseling schedule. Important: the admission last date (deadline) can change. Always verify dates on the official notification and portal."
+    },
+    {
+      "chunk_id": "cutoff_and_merit::chunk000",
+      "doc_id": "cutoff_and_merit",
+      "doc_title": "cutoff and merit",
+      "source_path": "D:/Retrieval-Aware Query Rewriting for Code-Switched Spoken Questions/code-switched-query-rewriting/data/documents/cutoff_and_merit.txt",
+      "text": "Cutoff and merit list basics \"Cutoff\" usually refers to the minimum score/percentage/rank required to be considered for admission. Merit lists may be formed using: - Entrance exam score (normalized if multiple sessions) - Board marks (percentage) or a weighted combination - Category-wise cutoffs based on seat matrix and reservation rules If you search for \"cutoff\", also include \"merit list\", \"seat matrix\", and the program name for better retrieval."
+    },
+    {
+      "chunk_id": "faiss_dense_retrieval::chunk000",
+      "doc_id": "faiss_dense_retrieval",
+      "doc_title": "faiss dense retrieval",
+      "source_path": "D:/Retrieval-Aware Query Rewriting for Code-Switched Spoken Questions/code-switched-query-rewriting/data/documents/faiss_dense_retrieval.txt",
+      "text": "FAISS dense retrieval notes FAISS is a library for efficient similarity search over dense vectors. Common workflow: - Encode documents into embeddings (e.g., SentenceTransformers). - Normalize embeddings and use inner product (IndexFlatIP) to approximate cosine similarity. - Persist the index to disk, along with metadata mapping index positions to document chunks. For small academic prototypes, IndexFlatIP is simple and reproducible on CPU."
+    },
+    {
+      "chunk_id": "fees_and_seats::chunk000",
+      "doc_id": "fees_and_seats",
+      "doc_title": "fees and seats",
+      "source_path": "D:/Retrieval-Aware Query Rewriting for Code-Switched Spoken Questions/code-switched-query-rewriting/data/documents/fees_and_seats.txt",
+      "text": "Fees and seat types (government vs private) Fees structure depends on institution type: - Government colleges typically have lower tuition fees and reserved seats as per policy. - Private colleges often have higher tuition fees and may have management quota seats. - Scholarships can reduce the effective cost if eligibility criteria are met. Always check the official fee structure PDF and seat matrix on the admission portal."
+    },
+    {
+      "chunk_id": "rag_basics::chunk000",
+      "doc_id": "rag_basics",
+      "doc_title": "rag basics",
+      "source_path": "D:/Retrieval-Aware Query Rewriting for Code-Switched Spoken Questions/code-switched-query-rewriting/data/documents/rag_basics.txt",
+      "text": "RAG (Retrieval-Augmented Generation) basics RAG systems answer questions by retrieving relevant documents/passages and then generating an answer grounded in those passages. Typical steps: 1) Embed the query and documents into vectors (dense retrieval) or use lexical matching (BM25). 2) Retrieve top-k relevant chunks. 3) Provide the retrieved context to a generator to produce the final answer. Benefits: - Improves factual grounding (less hallucination) - Enables domain-specific answers without training a new model"
+    },
+    {
+      "chunk_id": "required_documents::chunk000",
+      "doc_id": "required_documents",
+      "doc_title": "required documents",
+      "source_path": "D:/Retrieval-Aware Query Rewriting for Code-Switched Spoken Questions/code-switched-query-rewriting/data/documents/required_documents.txt",
+      "text": "Required documents for admission Common documents required during admission or counseling: - Government ID proof (Aadhaar/passport/driver license) - Recent photographs - Marksheets and certificates (10th, 12th, diploma as applicable) - Transfer certificate / school leaving certificate (if applicable) - Category certificate (SC/ST/OBC/EWS) if claiming reservation - Income certificate if applying for scholarship / fee concession Keep scanned copies ready for the application form upload step."
+    },
+    {
+      "chunk_id": "scholarship_eligibility::chunk000",
+      "doc_id": "scholarship_eligibility",
+      "doc_title": "scholarship eligibility",
+      "source_path": "D:/Retrieval-Aware Query Rewriting for Code-Switched Spoken Questions/code-switched-query-rewriting/data/documents/scholarship_eligibility.txt",
+      "text": "Scholarship eligibility (common criteria) Scholarship eligibility varies by scheme, but many programs use a combination of: - Academic performance: minimum percentage / CGPA in the previous qualifying exam - Family income threshold (annual household income) - Category: SC/ST/OBC/EWS or minority categories in some schemes - Program level: undergraduate vs postgraduate - Enrollment status: admission confirmed in an eligible institution Tip: Use keywords like \"income certificate\", \"eligibility\", \"undergraduate scholarship\", and the scheme name to find the right notice."
+    }
+  ]
+}

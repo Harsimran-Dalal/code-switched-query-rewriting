@@ -1,0 +1,62 @@
+[
+  {
+    "id": "q1",
+    "asr_text": "bhai scholarship ke liye eligibility kya hai for undergrad admission",
+    "expected_doc_ids": ["scholarship_eligibility"]
+  },
+  {
+    "id": "q2",
+    "asr_text": "mujhe admission form apply kaise karna hai aur last date kab hai",
+    "expected_doc_ids": ["admission_process"]
+  },
+  {
+    "id": "q3",
+    "asr_text": "fees structure private college ka approx kitna hota hai and any government seat?",
+    "expected_doc_ids": ["fees_and_seats"]
+  },
+  {
+    "id": "q4",
+    "asr_text": "documents kya chahiye for admission like certificate waghera",
+    "expected_doc_ids": ["required_documents"]
+  },
+  {
+    "id": "q5",
+    "asr_text": "cutoff kaise calculate hota hai merit list me",
+    "expected_doc_ids": ["cutoff_and_merit"]
+  },
+  {
+    "id": "q6",
+    "asr_text": "rag pipeline kya hota hai retrieval augmented generation simple explain",
+    "expected_doc_ids": ["rag_basics"]
+  },
+  {
+    "id": "q7",
+    "asr_text": "faiss index build ka best way kya hai for sentence embeddings",
+    "expected_doc_ids": ["faiss_dense_retrieval"]
+  },
+  {
+    "id": "q8",
+    "asr_text": "Admission process ka pura step kya hota hai from registration to counselling?",
+    "expected_doc_ids": ["admission_process"]
+  },
+  {
+    "id": "q9",
+    "asr_text": "Agar income certificate nahi hai to scholarship milegi ya nahi?",
+    "expected_doc_ids": ["scholarship_eligibility"]
+  },
+  {
+    "id": "q10",
+    "asr_text": "Private college me fees zyada hoti hai ya govt me?",
+    "expected_doc_ids": ["fees_and_seats"]
+  },
+  {
+    "id": "q11",
+    "asr_text": "Merit list kab nikalti hai aur cutoff kaise decide hota hai?",
+    "expected_doc_ids": ["cutoff_and_merit"]
+  },
+  {
+    "id": "q12",
+    "asr_text": "Form bharte time kaunse documents scan karke rakhne chahiye?",
+    "expected_doc_ids": ["required_documents"]
+  }
+]
