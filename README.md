@@ -296,7 +296,7 @@ Evaluation can be exported to CSV for report-ready analysis and integrated back 
 ## Installation
 
 ```bash
-git clone <your-repo-url>
+git clone https://github.com/Harsimran-Dalal/code-switched-query-rewriting
 cd code-switched-query-rewriting
 python -m venv venv
 venv\Scripts\activate
