@@ -221,25 +221,37 @@ code-switched-query-rewriting/
 
 ## Screenshots
 
-## Screenshots
+---
 
 ### Home / Input Interface
 ![Home UI](docs/screenshots/01-home-dashboard.png)
 
+---
+
 ### Rewrite Preview
 ![Rewrite Preview](docs/screenshots/02-query-rewrite-preview.png)
+
+---
 
 ### Baseline vs Rewritten Comparison
 ![Comparison View](docs/screenshots/03-baseline-vs-rewritten.png)
 
+---
+
 ### Comparison Insights
 ![Comparison Insights](docs/screenshots/04-comparison-insights.png)
+
+---
 
 ### Top Retrieved Documents
 ![Top Documents](docs/screenshots/05-top-documents.png)
 
+---
+
 ### Session History Sidebar
 ![Session History](docs/screenshots/06-session-history-sidebar.png)
+
+---
 
 ### Evaluation Snapshot
 ![Evaluation Snapshot](docs/screenshots/07-evaluation-snapshot.png)
